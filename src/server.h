@@ -4,6 +4,8 @@
 #include <string>
 #include <map>
 
+#include "socket.h"
+
 namespace Server {
 
     using Handler = std::function<void()>;
@@ -27,7 +29,6 @@ namespace Server {
         private:
             ServerSpecification m_specification;
             std::map<std::string, std::map<std::string,Handler>> m_handlers;
-
-            int m_serverSocket;
+            Socket* m_serverSocket = nullptr;
     };
 }
