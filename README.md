@@ -3,29 +3,35 @@
 - Add as submodule
 - Link
 
+## Server
 ~~~c++
-#include <server.h>
-#include <iostream>
+ #include <knekt.h>
+ #include <iostream>
 
 int main() {
-    bool running = true;
-
-    Server::ServerSpecification spec;
+    Knekt::ServerSpecification spec;
     spec.port = 8080;
 
-    Server::Server server(spec);
-    server.get("/", [](Server::Request request){
-        return Server::Response{ Server::StatusCode::Ok, "Hello World!" };
-    });
-
-    server.get("/quit", [&running](Server::Request request){
-        running = false;
-        return Server::Response{ Server::StatusCode::Ok, "Server is shutting down" };
+    Knekt::Server server(spec);
+    server.get("/", [](Knekt::Request request){
+        return Knekt::Response{ Knekt::StatusCode::Ok, "Hello World!" };
     });
 
     std::cout << "Server started on http://localhost:" << server.port() << std::endl;
-    while (running) {
+    while (true) {
         server.update();
     }
+}
+~~~
+
+## Client
+~~~c++
+ #include <knekt.h>
+ #include <iostream>
+
+int main() {
+    Knekt::Client::get("http://localhost:8080/", [](Knekt::Response response){
+        std::cout << response.body << std::endl;
+    });
 }
 ~~~

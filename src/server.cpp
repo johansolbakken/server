@@ -9,8 +9,23 @@
 
 #include <pthread.h>
 
-namespace Server
+namespace Knekt
 {
+    std::string from_status_code(StatusCode code)
+    {
+        switch (code)
+        {
+        case StatusCode::Ok:
+            return "OK";
+        case StatusCode::NotFound:
+            return "Not Found";
+        case StatusCode::InternalServerError:
+            return "Internal Server Error";
+        default:
+            return "Unknown";
+        }
+    }
+
     Server::Server(const ServerSpecification &specification)
         : m_specification(specification)
     {
@@ -58,8 +73,10 @@ namespace Server
         }
 
         std::stringstream response;
-        response << "HTTP/1.1 " << (int)res.statusCode << " " << (int)res.statusCode << "\r\n";
-        response << "Content-Type: application/json\r\n";
+        response << "HTTP/2 " << (int)res.statusCode << " "
+                 << from_status_code(res.statusCode)
+                 << "\r\n";
+        response << "Content-Type: text/json\r\n";
         response << "Content-Length: " << res.body.length() << "\r\n";
         response << "\r\n";
         response << res.body;

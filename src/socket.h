@@ -3,7 +3,7 @@
 #include <string>
 #include <memory>
 
-namespace Server
+namespace Knekt
 {
     enum class Domain
     {
@@ -37,6 +37,9 @@ namespace Server
 
         std::string read();
         void write(const std::string &data);
+
+        void connect(const std::string &ip);
+        void disconnect();
 
     private:
         SocketSpecification m_specification;

@@ -4,8 +4,9 @@
 #include <netinet/in.h>
 #include <unistd.h>
 #include <iostream>
+#include <arpa/inet.h>
 
-namespace Server
+namespace Knekt
 {
     Socket::Socket()
     {
@@ -82,5 +83,24 @@ namespace Server
     void Socket::write(const std::string &data)
     {
         send(m_socket, data.c_str(), data.size(), 0);
+    }
+
+    void Socket::connect(const std::string &ip)
+    {
+        sockaddr_in serverAddress;
+        serverAddress.sin_family = AF_INET;
+        serverAddress.sin_port = htons(m_specification.port);
+        inet_pton(AF_INET, ip.c_str(), &serverAddress.sin_addr);
+
+        if (::connect(m_socket, (sockaddr *)&serverAddress, sizeof(serverAddress)) < 0)
+        {
+            std::cerr << "Failed to connect to server" << std::endl;
+            exit(1);
+        }
+    }
+
+    void Socket::disconnect()
+    {
+        close(m_socket);
     }
 }
