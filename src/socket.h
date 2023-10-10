@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <memory>
 
 namespace Server
 {
@@ -32,7 +33,7 @@ namespace Server
 
         void bind();
         void listen();
-        Socket accept();
+        std::shared_ptr<Socket> accept();
 
         std::string read();
         void write(const std::string &data);

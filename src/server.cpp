@@ -5,6 +5,10 @@
 
 #include "socket.h"
 
+#include <chrono>
+
+#include <pthread.h>
+
 namespace Server
 {
     Server::Server(const ServerSpecification &specification)
@@ -16,7 +20,7 @@ namespace Server
         spec.protocol = 0;
         spec.port = m_specification.port;
         spec.maxConnections = m_specification.maxConnections;
-        
+
         m_serverSocket = new Socket(spec);
         m_serverSocket->bind();
         m_serverSocket->listen();
@@ -27,10 +31,9 @@ namespace Server
         delete m_serverSocket;
     }
 
-    void Server::update()
+    void Server::dispatch(const std::shared_ptr<Socket> &clientSocket)
     {
-        Socket clientSocket = m_serverSocket->accept();
-        std::string request = clientSocket.read();
+        std::string request = clientSocket->read();
 
         std::string method, path, version, status, statusMessage, header, body;
         std::stringstream ss(request);
@@ -48,8 +51,10 @@ namespace Server
         if (handler)
         {
             res = handler(req);
-        } else {
-            res = { StatusCode::NotFound, "Not found" };
+        }
+        else
+        {
+            res = {StatusCode::NotFound, "Not found"};
         }
 
         std::stringstream response;
@@ -59,7 +64,14 @@ namespace Server
         response << "\r\n";
         response << res.body;
 
-        clientSocket.write(response.str());
+        clientSocket->write(response.str());
+    }
+
+    void Server::update()
+    {
+        auto clientSocket = m_serverSocket->accept();
+
+        dispatch(clientSocket);
     }
 
     void Server::join()

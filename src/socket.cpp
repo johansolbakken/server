@@ -49,7 +49,7 @@ namespace Server
         }
     }
 
-    Socket Socket::accept()
+    std::shared_ptr<Socket> Socket::accept()
     {
         sockaddr_in clientAddress;
         socklen_t clientAddressLength = sizeof(clientAddress);
@@ -61,8 +61,8 @@ namespace Server
             exit(1);
         }
 
-        Socket client;
-        client.m_socket = clientSocket;
+        auto client = std::make_shared<Socket>();
+        client->m_socket = clientSocket;
         return client;
     }
 
