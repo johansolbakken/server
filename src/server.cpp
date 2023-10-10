@@ -32,22 +32,34 @@ namespace Server
         Socket clientSocket = m_serverSocket->accept();
         std::string request = clientSocket.read();
 
-        std::string method, path;
+        std::string method, path, version, status, statusMessage, header, body;
         std::stringstream ss(request);
-        ss >> method >> path;
+        ss >> method >> path >> version;
+
+        body = request.substr(request.find("\r\n\r\n") + 4);
+
+        Request req;
+        req.method = method;
+        req.path = path;
+        req.body = body;
 
         Handler handler = m_handlers[method][path];
+        Response res;
         if (handler)
         {
-            handler();
-            std::string response = "HTTP/1.1 200 OK\r\nContent-Length: 12\r\n\r\nHello World!";
-            clientSocket.write(response);
+            res = handler(req);
+        } else {
+            res = { StatusCode::NotFound, "Not found" };
         }
-        else
-        {
-            std::string response = "HTTP/1.1 404 Not Found\r\nContent-Length: 9\r\n\r\nNot Found";
-            clientSocket.write(response);
-        }
+
+        std::stringstream response;
+        response << "HTTP/1.1 " << (int)res.statusCode << " " << (int)res.statusCode << "\r\n";
+        response << "Content-Type: application/json\r\n";
+        response << "Content-Length: " << res.body.length() << "\r\n";
+        response << "\r\n";
+        response << res.body;
+
+        clientSocket.write(response.str());
     }
 
     void Server::join()

@@ -4,11 +4,14 @@ project(Server)
 
 set(CMAKE_CXX_STANDARD 23)
 
+add_subdirectory(vendor/json)
+
 file(GLOB_RECURSE SOURCE_FILES
         "src/*.cpp"
         "src/*.h")
 
 add_library(server ${SOURCE_FILES})
+target_include_directories(server PUBLIC src)
 
 target_include_directories(server PUBLIC src)
 
