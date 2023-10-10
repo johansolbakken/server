@@ -9,11 +9,15 @@ int main() {
     spec.maxConnections = 10;
 
     Server::Server server(spec);
-    server.addHandler("/", [](){
+    server.get("/", [](){
         std::cout << "Hello World!" << std::endl;
     });
 
-    server.addHandler("/quit", [&running](){
+    server.get("/status", [&running](){
+        std::cout << "Server is running = " << running << std::endl;
+    });
+
+    server.get("/quit", [&running](){
         running = false;
     });
 

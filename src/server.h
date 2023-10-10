@@ -21,10 +21,13 @@ namespace Server {
             void update();
             void join();
 
-            void addHandler(const std::string &path, const Handler &handler);
+            void get(const std::string &path, const Handler &handler);
+            void post(const std::string &path, const Handler &handler);
 
         private:
             ServerSpecification m_specification;
-            std::map<std::string, Handler> m_handlers;
+            std::map<std::string, std::map<std::string,Handler>> m_handlers;
+
+            int m_serverSocket;
     };
 }
