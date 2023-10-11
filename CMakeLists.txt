@@ -4,8 +4,6 @@ project(Server)
 
 set(CMAKE_CXX_STANDARD 23)
 
-add_subdirectory(vendor/json)
-
 #add curl
 
 file(GLOB_RECURSE SOURCE_FILES
