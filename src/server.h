@@ -8,8 +8,6 @@
 #include "socket.h"
 #include "model.h"
 
-#include <thread>
-
 namespace Knekt
 {
     using Handler = std::function<Response(Request)>;
@@ -42,9 +40,5 @@ namespace Knekt
         ServerSpecification m_specification;
         std::map<std::string, std::map<std::string, Handler>> m_handlers;
         Socket *m_serverSocket = nullptr;
-
-        std::vector<std::thread> m_threads;
-        int m_threadIndex = 0;
-        std::mutex m_mutex;
     };
 }
